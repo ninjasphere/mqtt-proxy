@@ -1,0 +1,16 @@
+# globals
+backend-servers = ["localhost:2883"]
+user = "guest"
+pass = "guest"
+
+[http]
+listen-address = ":9000"
+
+[mysql]
+connection-string = "root:@tcp(127.0.0.1:3306)/mqtt"
+mqtt-select = "select uid, mqtt_id from users where mqtt_id = ?"
+
+[mqtt]
+listen-address = ":8883"
+cert = "cert.pem"
+key = "cert.pem"

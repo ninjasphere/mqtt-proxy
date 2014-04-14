@@ -1,0 +1,4 @@
+backend-servers = ["hosta:8090", "hostb:8090"]
+
+[http]
+listen-address = ":9000"
