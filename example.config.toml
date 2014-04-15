@@ -7,10 +7,10 @@ pass = "guest"
 listen-address = ":9000"
 
 [mysql]
-connection-string = "root:@tcp(127.0.0.1:3306)/mqtt"
-mqtt-select = "select uid, mqtt_id from users where mqtt_id = ?"
+connection-string = "root:@tcp(127.0.0.1:3306)/ninja"
+mqtt-select = "select l.uid, l.mqtt_id from legends l where l.mqtt_id = ?"
 
 [mqtt]
 listen-address = ":8883"
-cert = "cert.pem"
-key = "cert.pem"
+cert = "ssl/cert.pem"
+key = "ssl/key.pem"
