@@ -44,6 +44,13 @@ rabbitmq-plugins enable rabbitmq_mqtt
 rabbitmq-plugins enable rabbitmq_tracing
 ```
 
+Restart rabbitmq.
+
+```
+rabbitmqctl stop
+rabbitmq-server -detached
+```
+
 # status
 
 * Preauthentication supports MySQL at the moment

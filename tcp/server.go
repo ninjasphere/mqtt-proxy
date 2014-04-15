@@ -54,13 +54,14 @@ func (t *TcpServer) StartServer(conf *conf.MqttConfiguration) {
 
 func (t *TcpServer) clientHandler(conn net.Conn) {
 
+	defer conn.Close()
+
 	var authUser *store.User
 
 	log.Printf("[serv] read connect msg")
 	msg, err := mqtt.DecodeOneMessage(conn, nil)
 
 	if err != nil {
-		conn.Close()
 		return
 	}
 	switch msg := msg.(type) {
@@ -76,7 +77,7 @@ func (t *TcpServer) clientHandler(conn net.Conn) {
 
 	default:
 		// anything else is bad
-		conn.Close()
+		log.Printf("expected conn got - %v", msg)
 		return
 	}
 
@@ -110,7 +111,6 @@ func sendBadUsernameOrPassword(conn net.Conn) {
 		ReturnCode: mqtt.RetCodeBadUsernameOrPassword,
 	}
 	connAck.Encode(conn)
-	conn.Close()
 }
 
 func sendServerUnavailable(conn net.Conn) {
@@ -119,5 +119,4 @@ func sendServerUnavailable(conn net.Conn) {
 		ReturnCode: mqtt.RetCodeServerUnavailable,
 	}
 	connAck.Encode(conn)
-	conn.Close()
 }

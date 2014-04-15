@@ -62,6 +62,8 @@ func (h *HttpHanders) mqttHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	defer conn.Close()
+
 	// This needs to be distributed across all servers
 	backend := h.proxy.Conf.BackendServers[0]
 

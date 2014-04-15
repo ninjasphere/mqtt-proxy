@@ -127,12 +127,11 @@ func (c *WsProxyConn) ReadIngressConn() {
 }
 
 func (c *WsProxyConn) Close() {
-	log.Printf("[ws] (%s) Close", c.id)
 
 	c.mutex.Lock()
 
 	if !c.closed {
-		c.wsconn.Close()
+		log.Printf("[ws] (%s) Close", c.id)
 		c.tcpconn.Close()
 		c.closed = true
 	}

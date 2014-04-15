@@ -109,12 +109,10 @@ func (c *TcpProxyConn) ReadIngressConn() {
 }
 
 func (c *TcpProxyConn) Close() {
-	log.Printf("[tcp] (%s) Close", c.id)
-
 	c.mutex.Lock()
 
 	if !c.closed {
-		c.cConn.Close()
+		log.Printf("[tcp] (%s) Close", c.id)
 		c.pConn.Close()
 		c.closed = true
 	}
