@@ -15,6 +15,35 @@ CREATE TABLE users (
 )
 ```
 
+Configure rabbitmq as a backend for mqtt-proxy by editing or creating `/usr/local/etc/rabbitmq/rabbitmq.config`.
+
+```
+[{rabbit,        [{tcp_listeners,    {"0.0.0.0", 5672}}]},
+ {rabbitmq_mqtt, [{default_user,     <<"guest">>},
+                  {default_pass,     <<"guest">>},
+                  {allow_anonymous,  true},
+                  {vhost,            <<"/">>},
+                  {exchange,         <<"amq.topic">>},
+                  {subscription_ttl, 1800000},
+                  {prefetch,         10},
+                  {ssl_listeners,    []},
+                  {tcp_listeners,    [2883]},
+                  {tcp_listen_options, [binary,
+                                        {packet,    raw},
+                                        {reuseaddr, true},
+                                        {backlog,   128},
+                                        {nodelay,   true}]}]}
+].
+```
+
+Enable plugins by modifying running the following commands.
+
+```
+rabbitmq-plugins enable rabbitmq_management
+rabbitmq-plugins enable rabbitmq_mqtt
+rabbitmq-plugins enable rabbitmq_tracing
+```
+
 # status
 
 * Preauthentication supports MySQL at the moment
