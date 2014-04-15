@@ -1,11 +1,6 @@
 package rewrite
 
-import (
-	"log"
-	"reflect"
-
-	"github.com/huin/mqtt"
-)
+import "github.com/huin/mqtt"
 
 type MsgRewriter struct {
 	CredentialsRewriter CredentialsRewriter
@@ -23,7 +18,7 @@ func CreatMsgRewriter(credentialsRewriter CredentialsRewriter, ingressRewriter T
 
 func (mr *MsgRewriter) RewriteIngress(msg mqtt.Message) mqtt.Message {
 
-	log.Printf("[ingress] msg: %s %v", reflect.TypeOf(msg), msg)
+	//	log.Printf("[ingress] msg: %s %v", reflect.TypeOf(msg), msg)
 
 	switch msg := msg.(type) {
 	case *mqtt.Connect:
@@ -40,7 +35,7 @@ func (mr *MsgRewriter) RewriteIngress(msg mqtt.Message) mqtt.Message {
 
 func (mr *MsgRewriter) RewriteEgress(msg mqtt.Message) mqtt.Message {
 
-	log.Printf("[egress] msg: %s %v", reflect.TypeOf(msg), msg)
+	//	log.Printf("[egress] msg: %s %v", reflect.TypeOf(msg), msg)
 
 	switch msg := msg.(type) {
 	case *mqtt.Publish:

@@ -2,7 +2,6 @@ package rewrite
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/huin/mqtt"
 )
@@ -39,7 +38,7 @@ func (crr *CredentialsReplaceRewriter) RewriteCredentials(msg *mqtt.Connect) *mq
 
 	msg.ClientId = fmt.Sprintf("%d-%s", crr.UserId, msg.ClientId)
 
-	log.Printf("[creds] %v", msg)
+	//	log.Printf("[creds] %v", msg)
 
 	return msg
 }

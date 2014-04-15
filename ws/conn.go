@@ -16,8 +16,9 @@ import (
 )
 
 type WsProxyConn struct {
-	tcpconn  net.Conn
-	wsconn   *websocket.Conn
+	tcpconn net.Conn
+	wsconn  *websocket.Conn
+
 	id       string
 	wait     sync.WaitGroup
 	rewriter *rewrite.MsgRewriter
@@ -56,13 +57,11 @@ func (c *WsProxyConn) ReadEgressConn() {
 	// cleanup once we are done
 	defer c.Close()
 
-Loop:
 	for {
 		msg, err := mqtt.DecodeOneMessage(c.tcpconn, nil)
 		if err != nil {
 			if err != io.EOF {
 				log.Println("[mqtt] Bad Message:", err)
-				break Loop
 			}
 			break
 
@@ -73,10 +72,11 @@ Loop:
 
 		encodedBuf := new(bytes.Buffer)
 
-		if err := msg.Encode(encodedBuf); err == nil {
-			c.wsconn.WriteMessage(websocket.BinaryMessage, encodedBuf.Bytes())
-		} else {
+		if err := msg.Encode(encodedBuf); err != nil {
 			log.Printf("[mqtt] Send failed: %s", err)
+			break
+		} else {
+			c.wsconn.WriteMessage(websocket.BinaryMessage, encodedBuf.Bytes())
 		}
 	}
 
@@ -98,7 +98,7 @@ func (c *WsProxyConn) ReadIngressConn() {
 			if err != io.EOF {
 				log.Println("NextReader:", err)
 			}
-			return
+			break
 		}
 
 		if mt == websocket.BinaryMessage {
@@ -111,14 +111,14 @@ func (c *WsProxyConn) ReadIngressConn() {
 
 			if err != nil {
 				log.Println("[ws] Unable to decode msg:", err)
-				return
+				break
 			}
 			if err := msg.Encode(c.tcpconn); err != nil {
 				log.Println("[ws] Send to upstream failed:", err)
-				return
+				break
 			}
 			if util.IsMqttDisconnect(msg) {
-				return
+				break
 			}
 
 		}
