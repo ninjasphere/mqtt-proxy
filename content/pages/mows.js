@@ -6179,7 +6179,7 @@ var websocket = _dereq_('websocket-stream')
 module.exports = function buildWebsocket(url, opts) {
   opts.protocol = 'mqttv3.1';
   opts.type = Uint8Array;
-  return websocket(url, opts);
+  return websocket(url);
 };
 
 },{"websocket-stream":61}],29:[function(_dereq_,module,exports){
@@ -10815,6 +10815,7 @@ module.exports = function getParams(port, host, opts) {
     if (parsed.host) {
       url.host = parsed.hostname;
       url.port = parsed.port || port;
+      url.pathname = parsed.pathname;
       url.protocol = (parsed.protocol === 'https:') ? 'wss://' : 'ws://';
       url.protocol = (parsed.protocol === 'wss:') ? 'wss://' : 'ws://';
     }
@@ -10837,6 +10838,10 @@ module.exports = function getParams(port, host, opts) {
 
   if (url.port) {
     result += ':' + url.port
+  }
+
+  if (url.pathname) {
+     result += url.pathname
   }
 
   return {
