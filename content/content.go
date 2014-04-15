@@ -2,4 +2,6 @@ package content
 
 import "github.com/GeertJohan/go.rice"
 
-var ContentBox = rice.MustFindBox("pages")
+func ContentBox() *rice.Box {
+	return rice.MustFindBox("pages")
+}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -15,9 +16,16 @@ import (
 
 var configFile = flag.String("config", "config.toml", "configuration file")
 var debug = flag.Bool("debug", false, "enable debugging")
+var version = flag.Bool("version", false, "show version")
 
 func main() {
 	flag.Parse()
+
+	if *version {
+		fmt.Printf("Version: %s\n", Version)
+		fmt.Printf("Git: %s\n", GitCommit)
+		os.Exit(0)
+	}
 
 	conf := conf.LoadConfiguration(*configFile)
 

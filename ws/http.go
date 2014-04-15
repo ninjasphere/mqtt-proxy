@@ -29,7 +29,7 @@ func (h *HttpHanders) StartServer(conf *conf.HttpConfiguration) {
 	log.Printf("[http] listening on %s", conf.ListenAddress)
 
 	r := mux.NewRouter()
-	fs := http.FileServer(content.ContentBox.HTTPBox())
+	fs := http.FileServer(content.ContentBox().HTTPBox())
 
 	// setup the handlers in the router
 	r.HandleFunc("/mqtt/{key}", h.mqttHandler)
