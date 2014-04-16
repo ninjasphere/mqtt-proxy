@@ -17,7 +17,10 @@ type HttpHanders struct {
 	store store.Store
 }
 
-func CreateHttpHanders(proxy *proxy.MQTTProxy, store store.Store) *HttpHanders {
+func CreateHttpHanders(proxy *proxy.MQTTProxy) *HttpHanders {
+
+	store := store.NewMysqlStore(&proxy.Conf.MqttStoreMysql)
+
 	return &HttpHanders{
 		proxy: proxy,
 		store: store,

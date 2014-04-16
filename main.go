@@ -9,7 +9,6 @@ import (
 
 	"github.com/ninjablocks/mqtt-proxy/conf"
 	"github.com/ninjablocks/mqtt-proxy/proxy"
-	"github.com/ninjablocks/mqtt-proxy/store"
 	"github.com/ninjablocks/mqtt-proxy/tcp"
 	"github.com/ninjablocks/mqtt-proxy/ws"
 )
@@ -35,10 +34,8 @@ func main() {
 
 	proxy := proxy.CreateMQTTProxy(conf)
 
-	store := store.NewMysqlStore(&conf.Mysql)
-
-	handlers := ws.CreateHttpHanders(proxy, store)
-	tcpServer := tcp.CreateTcpServer(proxy, store)
+	handlers := ws.CreateHttpHanders(proxy)
+	tcpServer := tcp.CreateTcpServer(proxy)
 
 	go handlers.StartServer(&conf.Http)
 

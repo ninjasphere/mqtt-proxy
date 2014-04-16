@@ -20,7 +20,10 @@ type TcpServer struct {
 	store store.Store
 }
 
-func CreateTcpServer(proxy *proxy.MQTTProxy, store store.Store) *TcpServer {
+func CreateTcpServer(proxy *proxy.MQTTProxy) *TcpServer {
+
+	store := store.NewMysqlStore(&proxy.Conf.BlockStoreMysql)
+
 	return &TcpServer{
 		proxy: proxy,
 		store: store,

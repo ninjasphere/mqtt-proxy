@@ -10,7 +10,7 @@ import (
 
 type MysqlConfiguration struct {
 	ConnectionString string `toml:"connection-string"`
-	MqttSelect       string `toml:"mqtt-select"`
+	Select           string `toml:"select"`
 }
 
 type HttpConfiguration struct {
@@ -28,9 +28,10 @@ type Configuration struct {
 	User           string   `toml:"user"`
 	Pass           string   `toml:"pass"`
 
-	Http  HttpConfiguration  `toml:"http"`
-	Mysql MysqlConfiguration `toml:"mysql"`
-	Mqtt  MqttConfiguration  `toml:"mqtt"`
+	Http            HttpConfiguration  `toml:"http"`
+	BlockStoreMysql MysqlConfiguration `toml:"block-store"`
+	MqttStoreMysql  MysqlConfiguration `toml:"mqtt-store"`
+	Mqtt            MqttConfiguration  `toml:"mqtt"`
 }
 
 func LoadConfiguration(fileName string) *Configuration {
@@ -68,11 +69,18 @@ func parseTomlConfiguration(filename string) (*Configuration, error) {
 		tomlConfiguration.Pass = "guest"
 	}
 
-	if tomlConfiguration.Mysql.ConnectionString == "" {
-		tomlConfiguration.Mysql.ConnectionString = "root:@tcp(127.0.0.1:3306)/mqtt"
+	if tomlConfiguration.MqttStoreMysql.ConnectionString == "" {
+		tomlConfiguration.MqttStoreMysql.ConnectionString = "root:@tcp(127.0.0.1:3306)/mqtt"
 	}
-	if tomlConfiguration.Mysql.MqttSelect == "" {
-		tomlConfiguration.Mysql.MqttSelect = "select uid, mqtt_id from users where mqtt_id = ?"
+	if tomlConfiguration.MqttStoreMysql.Select == "" {
+		tomlConfiguration.MqttStoreMysql.Select = "select uid, mqtt_id from users where mqtt_id = ?"
+	}
+
+	if tomlConfiguration.BlockStoreMysql.ConnectionString == "" {
+		tomlConfiguration.BlockStoreMysql.ConnectionString = "root:@tcp(127.0.0.1:3306)/mqtt"
+	}
+	if tomlConfiguration.BlockStoreMysql.Select == "" {
+		tomlConfiguration.BlockStoreMysql.Select = "select uid, mqtt_id from users where mqtt_id = ?"
 	}
 
 	return tomlConfiguration, nil
