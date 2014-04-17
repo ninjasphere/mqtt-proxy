@@ -15,6 +15,8 @@ type MysqlConfiguration struct {
 
 type HttpConfiguration struct {
 	ListenAddress string `toml:"listen-address"`
+	Cert          string `toml:"cert"`
+	Key           string `toml:"key"`
 }
 
 type MqttConfiguration struct {

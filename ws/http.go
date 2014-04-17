@@ -41,7 +41,12 @@ func (h *HttpHanders) StartServer(conf *conf.HttpConfiguration) {
 	// configure this router in http
 	http.Handle("/", r)
 
-	log.Fatal(http.ListenAndServe(conf.ListenAddress, nil))
+	if conf.Cert == "" {
+		log.Fatal(http.ListenAndServe(conf.ListenAddress, nil))
+	} else {
+		log.Fatal(http.ListenAndServeTLS(conf.ListenAddress, conf.Cert, conf.Key, nil))
+	}
+
 }
 
 func (h *HttpHanders) mqttHandler(w http.ResponseWriter, r *http.Request) {
