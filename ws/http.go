@@ -19,7 +19,7 @@ type HttpHanders struct {
 
 func CreateHttpHanders(proxy *proxy.MQTTProxy) *HttpHanders {
 
-	store := store.NewMysqlStore(&proxy.Conf.MqttStoreMysql)
+	store := store.NewMysqlStore(&proxy.Conf.WsStoreMysql)
 
 	return &HttpHanders{
 		proxy: proxy,

@@ -22,7 +22,7 @@ type TcpServer struct {
 
 func CreateTcpServer(proxy *proxy.MQTTProxy) *TcpServer {
 
-	store := store.NewMysqlStore(&proxy.Conf.BlockStoreMysql)
+	store := store.NewMysqlStore(&proxy.Conf.MqttStoreMysql)
 
 	return &TcpServer{
 		proxy: proxy,

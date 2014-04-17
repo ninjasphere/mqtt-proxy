@@ -6,7 +6,11 @@ pass = "guest"
 [http]
 listen-address = ":9000"
 
-[mysql]
+[mqtt-store]
+connection-string = "root:@tcp(127.0.0.1:3306)/ninja"
+mqtt-select = "select l.uid, l.mqtt_id from legends l where l.mqtt_id = ?"
+
+[ws-store]
 connection-string = "root:@tcp(127.0.0.1:3306)/ninja"
 mqtt-select = "select l.uid, l.mqtt_id from legends l where l.mqtt_id = ?"
 

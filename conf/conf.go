@@ -28,10 +28,10 @@ type Configuration struct {
 	User           string   `toml:"user"`
 	Pass           string   `toml:"pass"`
 
-	Http            HttpConfiguration  `toml:"http"`
-	BlockStoreMysql MysqlConfiguration `toml:"block-store"`
-	MqttStoreMysql  MysqlConfiguration `toml:"mqtt-store"`
-	Mqtt            MqttConfiguration  `toml:"mqtt"`
+	Http           HttpConfiguration  `toml:"http"`
+	MqttStoreMysql MysqlConfiguration `toml:"mqtt-store"`
+	WsStoreMysql   MysqlConfiguration `toml:"ws-store"`
+	Mqtt           MqttConfiguration  `toml:"mqtt"`
 }
 
 func LoadConfiguration(fileName string) *Configuration {
@@ -69,6 +69,7 @@ func parseTomlConfiguration(filename string) (*Configuration, error) {
 		tomlConfiguration.Pass = "guest"
 	}
 
+	// need a way to merge defaults..
 	if tomlConfiguration.MqttStoreMysql.ConnectionString == "" {
 		tomlConfiguration.MqttStoreMysql.ConnectionString = "root:@tcp(127.0.0.1:3306)/mqtt"
 	}
@@ -76,11 +77,11 @@ func parseTomlConfiguration(filename string) (*Configuration, error) {
 		tomlConfiguration.MqttStoreMysql.Select = "select uid, mqtt_id from users where mqtt_id = ?"
 	}
 
-	if tomlConfiguration.BlockStoreMysql.ConnectionString == "" {
-		tomlConfiguration.BlockStoreMysql.ConnectionString = "root:@tcp(127.0.0.1:3306)/mqtt"
+	if tomlConfiguration.WsStoreMysql.ConnectionString == "" {
+		tomlConfiguration.WsStoreMysql.ConnectionString = "root:@tcp(127.0.0.1:3306)/mqtt"
 	}
-	if tomlConfiguration.BlockStoreMysql.Select == "" {
-		tomlConfiguration.BlockStoreMysql.Select = "select uid, mqtt_id from users where mqtt_id = ?"
+	if tomlConfiguration.WsStoreMysql.Select == "" {
+		tomlConfiguration.WsStoreMysql.Select = "select uid, mqtt_id from users where mqtt_id = ?"
 	}
 
 	return tomlConfiguration, nil
