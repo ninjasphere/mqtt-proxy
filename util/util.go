@@ -5,8 +5,8 @@ import (
 	"net"
 	"reflect"
 
-	"github.com/huin/mqtt"
 	"github.com/ninjablocks/mqtt-proxy/proxy"
+	"github.com/wolfeidau/mqtt"
 )
 
 type MqttTcpMessageReader struct {

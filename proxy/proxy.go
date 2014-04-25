@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"github.com/ninjablocks/mqtt-proxy/conf"
+	"github.com/ninjablocks/mqtt-proxy/metrics"
 	"github.com/ninjablocks/mqtt-proxy/rewrite"
 	"github.com/ninjablocks/mqtt-proxy/store"
 )
@@ -14,12 +15,16 @@ type ProxyConn interface {
 type MQTTProxy struct {
 	Conf        *conf.Configuration
 	connections map[string]ProxyConn
+	Metrics     metrics.ProxyMetrics
 }
 
 func CreateMQTTProxy(conf *conf.Configuration) *MQTTProxy {
-	return &MQTTProxy{
-		Conf: conf,
+	p := &MQTTProxy{
+		Conf:    conf,
+		Metrics: metrics.NewProxyMetrics(),
 	}
+
+	return p
 }
 
 func (p *MQTTProxy) mqttCredentialsRewriter(user *store.User) rewrite.CredentialsRewriter {

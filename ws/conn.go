@@ -10,9 +10,9 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
-	"github.com/huin/mqtt"
 	"github.com/ninjablocks/mqtt-proxy/rewrite"
 	"github.com/ninjablocks/mqtt-proxy/util"
+	"github.com/wolfeidau/mqtt"
 )
 
 type WsProxyConn struct {
@@ -66,13 +66,14 @@ func (c *WsProxyConn) ReadEgressConn() {
 			break
 
 		}
-		util.DebugMQTTMsg("mqtt", c, msg)
+		//util.DebugMQTTMsg("mqtt", c, msg)
 
 		msg = c.rewriter.RewriteEgress(msg)
 
 		encodedBuf := new(bytes.Buffer)
 
-		if err := msg.Encode(encodedBuf); err != nil {
+		_, err = msg.Encode(encodedBuf)
+		if err != nil {
 			log.Printf("[mqtt] Send failed: %s", err)
 			break
 		} else {
@@ -105,7 +106,7 @@ func (c *WsProxyConn) ReadIngressConn() {
 
 			msg, err := mqtt.DecodeOneMessage(bytes.NewReader(b), nil)
 
-			util.DebugMQTTMsg("ws", c, msg)
+			//util.DebugMQTTMsg("ws", c, msg)
 
 			msg = c.rewriter.RewriteIngress(msg)
 
@@ -113,7 +114,9 @@ func (c *WsProxyConn) ReadIngressConn() {
 				log.Println("[ws] Unable to decode msg:", err)
 				break
 			}
-			if err := msg.Encode(c.tcpconn); err != nil {
+			_, err = msg.Encode(c.tcpconn)
+
+			if err != nil {
 				log.Println("[ws] Send to upstream failed:", err)
 				break
 			}

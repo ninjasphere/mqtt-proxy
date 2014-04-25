@@ -25,15 +25,29 @@ type MqttConfiguration struct {
 	Key           string `toml:"key"`
 }
 
+type InfluxConfiguration struct {
+	Host     string `toml:"host"`
+	User     string `toml:"user"`
+	Pass     string `toml:"pass"`
+	Database string `toml:"database"`
+}
+
+type LibratoConfiguration struct {
+	Email string `toml:"email"`
+	Token string `toml:"token"`
+}
+
 type Configuration struct {
 	BackendServers []string `toml:"backend-servers"`
 	User           string   `toml:"user"`
 	Pass           string   `toml:"pass"`
 
-	Http           HttpConfiguration  `toml:"http"`
-	MqttStoreMysql MysqlConfiguration `toml:"mqtt-store"`
-	WsStoreMysql   MysqlConfiguration `toml:"ws-store"`
-	Mqtt           MqttConfiguration  `toml:"mqtt"`
+	Http           HttpConfiguration    `toml:"http"`
+	MqttStoreMysql MysqlConfiguration   `toml:"mqtt-store"`
+	WsStoreMysql   MysqlConfiguration   `toml:"ws-store"`
+	Mqtt           MqttConfiguration    `toml:"mqtt"`
+	Influx         InfluxConfiguration  `toml:"influx"`
+	Librato        LibratoConfiguration `toml:"librato"`
 }
 
 func LoadConfiguration(fileName string) *Configuration {

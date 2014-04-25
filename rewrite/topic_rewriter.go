@@ -4,7 +4,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/huin/mqtt"
+	"github.com/wolfeidau/mqtt"
 )
 
 var INGRESS = 1

@@ -3,6 +3,7 @@ package tcp
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net"
 
 	"github.com/ninjablocks/mqtt-proxy/rewrite"
@@ -28,7 +29,7 @@ func CreateTcpProxyConn(conn net.Conn, backend string) (*TcpProxyConn, error) {
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Error resolving upstream: %s", err))
 	}
-
+	log.Printf("Opening connection to %s", addr)
 	tcpconn, err := net.DialTCP("tcp", nil, addr)
 
 	if err != nil {

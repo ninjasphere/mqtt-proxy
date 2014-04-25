@@ -1,6 +1,6 @@
 package rewrite
 
-import "github.com/huin/mqtt"
+import "github.com/wolfeidau/mqtt"
 
 type MsgRewriter struct {
 	CredentialsRewriter CredentialsRewriter

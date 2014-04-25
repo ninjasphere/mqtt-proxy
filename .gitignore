@@ -1,3 +1,4 @@
 config.toml
 mqtt-proxy
 content/pages.rice-box.go
+pkg

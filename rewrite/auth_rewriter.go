@@ -3,7 +3,7 @@ package rewrite
 import (
 	"fmt"
 
-	"github.com/huin/mqtt"
+	"github.com/wolfeidau/mqtt"
 )
 
 type CredentialsRewriter interface {

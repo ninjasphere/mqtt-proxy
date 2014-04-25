@@ -8,6 +8,7 @@ import (
 	"os/signal"
 
 	"github.com/ninjablocks/mqtt-proxy/conf"
+	"github.com/ninjablocks/mqtt-proxy/metrics"
 	"github.com/ninjablocks/mqtt-proxy/proxy"
 	"github.com/ninjablocks/mqtt-proxy/tcp"
 	"github.com/ninjablocks/mqtt-proxy/ws"
@@ -32,14 +33,19 @@ func main() {
 		log.Printf("[main] conf %+v", conf)
 	}
 
-	proxy := proxy.CreateMQTTProxy(conf)
+	p := proxy.CreateMQTTProxy(conf)
 
-	handlers := ws.CreateHttpHanders(proxy)
-	tcpServer := tcp.CreateTcpServer(proxy)
+	// asign the servers
+	wsServer := ws.CreateHttpHanders(p)
+	tcpServer := tcp.CreateTcpServer(p)
 
-	go handlers.StartServer(&conf.Http)
+	go wsServer.StartServer(&conf.Http)
 
 	go tcpServer.StartServer(&conf.Mqtt)
+
+	metrics.UploadToInflux(&conf.Influx)
+
+	metrics.UploadToLibrato(&conf.Librato)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill)

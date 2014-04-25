@@ -3,7 +3,7 @@ package rewrite
 import (
 	"testing"
 
-	"github.com/huin/mqtt"
+	"github.com/wolfeidau/mqtt"
 
 	. "launchpad.net/gocheck"
 )

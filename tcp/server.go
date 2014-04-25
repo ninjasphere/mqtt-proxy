@@ -8,11 +8,11 @@ import (
 	"net"
 	"reflect"
 
-	"github.com/huin/mqtt"
 	"github.com/ninjablocks/mqtt-proxy/conf"
 	"github.com/ninjablocks/mqtt-proxy/proxy"
 	"github.com/ninjablocks/mqtt-proxy/store"
 	"github.com/ninjablocks/mqtt-proxy/util"
+	"github.com/wolfeidau/mqtt"
 )
 
 type TcpServer struct {
@@ -82,6 +82,10 @@ func (t *TcpServer) clientHandler(conn net.Conn) {
 
 	p, err := CreateTcpProxyConn(conn, backend)
 
+	defer p.pConn.Close()
+
+	t.proxy.Metrics.Connects.Mark(1)
+
 	if err != nil {
 		log.Printf("[serv] Error creating proxy connection - %s", err)
 		sendServerUnavailable(conn)
@@ -107,14 +111,19 @@ Loop:
 
 		case msg := <-cmr.InMsgs:
 
-			util.DebugMQTT("client", conn, msg)
+			//util.DebugMQTT("client", conn, msg)
 			msg = p.rewriter.RewriteIngress(msg)
 
+			t.proxy.Metrics.Msgs.Mark(1)
+
 			// write to the proxy connection
-			if err := msg.Encode(p.pConn); err != nil {
+			len, err := msg.Encode(p.pConn)
+
+			if err != nil {
 				log.Println("[serv] proxy connection error - %s", err)
 				break Loop
 			}
+			t.proxy.Metrics.MsgBodySize.Update(int64(len))
 
 		case err := <-cmr.InErrors:
 			log.Printf("[serv] client connection read error - %s", err)
@@ -122,14 +131,18 @@ Loop:
 
 		case msg := <-pmr.InMsgs:
 
-			util.DebugMQTT("proxy", conn, msg)
+			//util.DebugMQTT("proxy", conn, msg)
 			msg = p.rewriter.RewriteEgress(msg)
 
+			t.proxy.Metrics.MsgReply.Mark(1)
+
 			// write to the client connection
-			if err := msg.Encode(p.cConn); err != nil {
+			len, err := msg.Encode(p.cConn)
+			if err != nil {
 				log.Println("[serv] proxy connection error - %s", err)
 				break Loop
 			}
+			t.proxy.Metrics.MsgBodySize.Update(int64(len))
 
 		case err := <-pmr.InErrors:
 			log.Printf("[serv] proxy connection read error - %s", err)
@@ -148,7 +161,8 @@ func (t *TcpServer) handleAuth(cmr *util.MqttTcpMessageReader, proxyConn *TcpPro
 	select {
 	case msg := <-cmr.InMsgs:
 
-		util.DebugMQTT("auth", proxyConn.cConn, msg)
+		//util.DebugMQTT("auth", proxyConn.cConn, msg)
+		t.proxy.Metrics.Msgs.Mark(1)
 
 		switch cmsg := msg.(type) {
 		case *mqtt.Connect:
@@ -163,10 +177,14 @@ func (t *TcpServer) handleAuth(cmr *util.MqttTcpMessageReader, proxyConn *TcpPro
 
 			msg = proxyConn.rewriter.RewriteIngress(msg)
 
-			if err := msg.Encode(proxyConn.pConn); err != nil {
+			len, err := msg.Encode(proxyConn.pConn)
+
+			if err != nil {
 				log.Println("[serv] proxy connection error - %s", err)
 				return err
 			}
+
+			t.proxy.Metrics.MsgBodySize.Update(int64(len))
 
 			return nil
 
