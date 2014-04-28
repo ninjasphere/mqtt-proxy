@@ -1,6 +1,8 @@
 package metrics
 
 import (
+	"strings"
+
 	gmetrics "github.com/rcrowley/go-metrics"
 )
 
@@ -12,9 +14,11 @@ type ProxyMetrics struct {
 	MsgForward  gmetrics.Meter
 	MsgBodySize gmetrics.Histogram
 	Connects    gmetrics.Meter
+	Connections gmetrics.Gauge
 }
 
-func NewProxyMetrics() ProxyMetrics {
+// conf.Environment, conf.Region
+func NewProxyMetrics(env string, region string) ProxyMetrics {
 
 	pm := ProxyMetrics{
 		Msgs:        gmetrics.NewMeter(),
@@ -22,13 +26,17 @@ func NewProxyMetrics() ProxyMetrics {
 		MsgForward:  gmetrics.NewMeter(),
 		MsgBodySize: gmetrics.NewHistogram(gmetrics.NewExpDecaySample(1028, 0.015)),
 		Connects:    gmetrics.NewMeter(),
+		Connections: gmetrics.NewGauge(),
 	}
 
-	gmetrics.Register("mqtt-proxy.proxy.msgs", pm.Msgs)
-	gmetrics.Register("mqtt-proxy.proxy.msg_reply", pm.Msgs)
-	gmetrics.Register("mqtt-proxy.proxy.msg_forward", pm.Msgs)
-	gmetrics.Register("mqtt-proxy.proxy.msg_body_size", pm.MsgBodySize)
-	gmetrics.Register("mqtt-proxy.proxy.connects", pm.Connects)
+	prefix := strings.Join([]string{region, env, "mqtt-proxy"}, ".")
+
+	gmetrics.Register(prefix+".proxy.msgs", pm.Msgs)
+	gmetrics.Register(prefix+".proxy.msg_reply", pm.Msgs)
+	gmetrics.Register(prefix+".proxy.msg_forward", pm.Msgs)
+	gmetrics.Register(prefix+".proxy.msg_body_size", pm.MsgBodySize)
+	gmetrics.Register(prefix+".proxy.connects", pm.Connects)
+	gmetrics.Register(prefix+".proxy.connections", pm.Connections)
 
 	return pm
 }

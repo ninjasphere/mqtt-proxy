@@ -42,6 +42,14 @@ type Configuration struct {
 	User           string   `toml:"user"`
 	Pass           string   `toml:"pass"`
 
+	// typically us-west | us-east
+	// prepended to metrics
+	Region string `toml:"region"`
+
+	// typically develop | beta | prod
+	// prepended to metrics
+	Environment string `toml:"env"`
+
 	Http           HttpConfiguration    `toml:"http"`
 	MqttStoreMysql MysqlConfiguration   `toml:"mqtt-store"`
 	WsStoreMysql   MysqlConfiguration   `toml:"ws-store"`
@@ -71,6 +79,14 @@ func parseTomlConfiguration(filename string) (*Configuration, error) {
 	}
 	if len(tomlConfiguration.BackendServers) == 0 {
 		return nil, errors.New("At least one backend servers required.")
+	}
+
+	if tomlConfiguration.Region == "" {
+		tomlConfiguration.Region = "us-east"
+	}
+
+	if tomlConfiguration.Environment == "" {
+		tomlConfiguration.Environment = "develop"
 	}
 	if tomlConfiguration.Http.ListenAddress == "" {
 		tomlConfiguration.Http.ListenAddress = ":9000"

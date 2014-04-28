@@ -43,3 +43,7 @@ func CreateTcpProxyConn(conn net.Conn, backend string) (*TcpProxyConn, error) {
 func (c *TcpProxyConn) Id() string {
 	return c.id
 }
+
+func (c *TcpProxyConn) Close() {
+	c.pConn.Close()
+}

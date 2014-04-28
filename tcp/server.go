@@ -72,6 +72,9 @@ func (t *TcpServer) clientHandler(conn net.Conn) {
 
 	defer conn.Close()
 
+	t.proxy.RegisterSession(conn)
+	defer t.proxy.UnRegisterSession(conn)
+
 	// create channels for the return messages from the client
 	cmr := util.CreateMqttTcpMessageReader(conn)
 
@@ -81,8 +84,6 @@ func (t *TcpServer) clientHandler(conn net.Conn) {
 	backend := t.proxy.Conf.BackendServers[0]
 
 	p, err := CreateTcpProxyConn(conn, backend)
-
-	defer p.pConn.Close()
 
 	t.proxy.Metrics.Connects.Mark(1)
 
