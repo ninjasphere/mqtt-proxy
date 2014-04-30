@@ -3,7 +3,7 @@ set -e
 
 OWNER=ninjablocks
 BIN_NAME=mqtt-proxy
-PROJECT_NAME=meshthing-serial-bridge
+PROJECT_NAME=mqtt-proxy
 
 # Get the parent directory of where this script is.
 SOURCE="${BASH_SOURCE[0]}"
