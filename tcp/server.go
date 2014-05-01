@@ -58,17 +58,21 @@ func (t *TcpServer) startListener(conf *conf.MqttConfiguration) (net.Listener, e
 		if err != nil {
 			log.Fatalf("server: loadkeys: %s", err)
 		}
+		log.Println("[serv] Starting tls listener")
 
 		config := tls.Config{Certificates: []tls.Certificate{cert}}
 
 		return tls.Listen("tcp", conf.ListenAddress, &config)
 	} else {
+		log.Println("[serv] Starting tcp listener")
 		return net.Listen("tcp", conf.ListenAddress)
 	}
 
 }
 
 func (t *TcpServer) clientHandler(conn net.Conn) {
+
+	log.Printf("[serv] client connection opened - %s", conn.RemoteAddr())
 
 	defer conn.Close()
 

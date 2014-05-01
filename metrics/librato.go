@@ -17,6 +17,12 @@ func UploadToLibrato(config *conf.LibratoConfiguration) {
 			log.Fatalf("Unable to retrieve a hostname %s", err)
 		}
 
-		go librato.Librato(metrics.DefaultRegistry, 30e9, config.Email, config.Token, hostname, []float64{95}, time.Millisecond)
+		go librato.Librato(metrics.DefaultRegistry,
+			30e9,          // interval
+			config.Email,  // account email addres
+			config.Token,  // auth token
+			hostname,      // source
+			[]float64{95}, // precentiles to send
+			time.Millisecond)
 	}
 }

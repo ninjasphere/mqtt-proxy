@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/ninjablocks/mqtt-proxy/conf"
-	"github.com/ninjablocks/mqtt-proxy/content"
 	"github.com/ninjablocks/mqtt-proxy/proxy"
 	"github.com/ninjablocks/mqtt-proxy/store"
 )
@@ -32,11 +31,9 @@ func (h *HttpHanders) StartServer(conf *conf.HttpConfiguration) {
 	log.Printf("[http] listening on %s", conf.ListenAddress)
 
 	r := mux.NewRouter()
-	fs := http.FileServer(content.ContentBox().HTTPBox())
 
 	// setup the handlers in the router
 	r.HandleFunc("/mqtt/{key}", h.mqttHandler)
-	r.PathPrefix("/").Handler(fs)
 
 	// configure this router in http
 	http.Handle("/", r)
