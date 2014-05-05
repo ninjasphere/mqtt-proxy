@@ -46,6 +46,9 @@ func (s *MysqlStore) FindUser(token string) (*User, error) {
 	var mqttId string
 	err := s.db.QueryRow(s.conf.Select, token).Scan(&uid, &mqttId)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, ErrUserNotFound
+		}
 		return nil, err
 	}
 	return &User{

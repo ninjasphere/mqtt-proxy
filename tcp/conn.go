@@ -45,5 +45,6 @@ func (c *TcpProxyConn) Id() string {
 }
 
 func (c *TcpProxyConn) Close() {
+	log.Println("closing proxy connection: ", c.pConn.RemoteAddr())
 	c.pConn.Close()
 }

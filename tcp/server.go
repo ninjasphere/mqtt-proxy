@@ -89,6 +89,8 @@ func (t *TcpServer) clientHandler(conn net.Conn) {
 
 	p, err := CreateTcpProxyConn(conn, backend)
 
+	defer p.Close()
+
 	t.proxy.Metrics.Connects.Mark(1)
 
 	if err != nil {
@@ -100,7 +102,13 @@ func (t *TcpServer) clientHandler(conn net.Conn) {
 	// do the authentication up front before going into normal operation
 	if err = t.handleAuth(cmr, p); err != nil {
 		log.Printf("[serv] Error authenticating connection - %s", err)
-		sendBadUsernameOrPassword(p.cConn)
+		// be very careful and clear on the error type as we are saying
+		// for sure these credentials are not valid.
+		if err == store.ErrUserNotFound {
+			sendBadUsernameOrPassword(p.cConn)
+		} else {
+			sendServerUnavailable(conn)
+		}
 		return
 	}
 

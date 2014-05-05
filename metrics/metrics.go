@@ -20,6 +20,8 @@ type ProxyMetrics struct {
 // conf.Environment, conf.Region
 func NewProxyMetrics(env string, region string) ProxyMetrics {
 
+	prefix := buildPrefix(env, region)
+
 	pm := ProxyMetrics{
 		Msgs:        gmetrics.NewMeter(),
 		MsgReply:    gmetrics.NewMeter(),
@@ -29,8 +31,6 @@ func NewProxyMetrics(env string, region string) ProxyMetrics {
 		Connections: gmetrics.NewGauge(),
 	}
 
-	prefix := strings.Join([]string{region, env, "mqtt-proxy"}, ".")
-
 	gmetrics.Register(prefix+".proxy.msgs", pm.Msgs)
 	gmetrics.Register(prefix+".proxy.msg_reply", pm.Msgs)
 	gmetrics.Register(prefix+".proxy.msg_forward", pm.Msgs)
@@ -39,4 +39,8 @@ func NewProxyMetrics(env string, region string) ProxyMetrics {
 	gmetrics.Register(prefix+".proxy.connections", pm.Connections)
 
 	return pm
+}
+
+func buildPrefix(env string, region string) string {
+	return strings.Join([]string{region, env, "mqtt-proxy"}, ".")
 }
