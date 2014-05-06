@@ -27,13 +27,13 @@ func CreateTcpProxyConn(conn net.Conn, backend string) (*TcpProxyConn, error) {
 	addr, err := net.ResolveTCPAddr("tcp", backend)
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Error resolving upstream: %s", err))
+		return nil, errors.New(fmt.Sprintf("[serv] Error resolving upstream: %s", err))
 	}
 	log.Printf("Opening connection to %s", addr)
 	tcpconn, err := net.DialTCP("tcp", nil, addr)
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Error connecting to upstream: %s", err))
+		return nil, errors.New(fmt.Sprintf("[serv] Error connecting to upstream: %s", err))
 	}
 
 	return &TcpProxyConn{cConn: conn, pConn: tcpconn, id: fmt.Sprintf("%s %s", conn.RemoteAddr(), conn.LocalAddr())}, nil
@@ -45,6 +45,5 @@ func (c *TcpProxyConn) Id() string {
 }
 
 func (c *TcpProxyConn) Close() {
-	log.Println("closing proxy connection: ", c.pConn.RemoteAddr())
 	c.pConn.Close()
 }

@@ -18,25 +18,27 @@ type MqttTcpMessageReader struct {
 func CreateMqttTcpMessageReader(tcpconn net.Conn) *MqttTcpMessageReader {
 	return &MqttTcpMessageReader{
 		Tcpconn:  tcpconn,
-		InMsgs:   make(chan mqtt.Message),
-		InErrors: make(chan error),
+		InMsgs:   make(chan mqtt.Message, 1),
+		InErrors: make(chan error, 1),
 	}
 }
 
 func (m *MqttTcpMessageReader) ReadMqttMessages() {
+
+	defer log.Println("[serv] Reader done - ", m.Tcpconn.RemoteAddr())
 
 	for {
 		msg, err := mqtt.DecodeOneMessage(m.Tcpconn, nil)
 		if err != nil {
 			m.InErrors <- err
 			break
+		} else {
+			m.InMsgs <- msg
 		}
-		m.InMsgs <- msg
 	}
+
 }
 
-func (m *MqttTcpMessageReader) SendMqttMessage(msg mqtt.Message) {
-}
 func IsMqttDisconnect(msg mqtt.Message) bool {
 	return reflect.TypeOf(msg) == reflect.TypeOf(mqtt.MsgDisconnect)
 }

@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"reflect"
@@ -89,15 +90,15 @@ func (t *TcpServer) clientHandler(conn net.Conn) {
 
 	p, err := CreateTcpProxyConn(conn, backend)
 
-	defer p.Close()
-
-	t.proxy.Metrics.Connects.Mark(1)
-
 	if err != nil {
 		log.Printf("[serv] Error creating proxy connection - %s", err)
 		sendServerUnavailable(conn)
 		return
 	}
+
+	defer p.Close()
+
+	t.proxy.Metrics.Connects.Mark(1)
 
 	// do the authentication up front before going into normal operation
 	if err = t.handleAuth(cmr, p); err != nil {
@@ -158,14 +159,16 @@ Loop:
 			t.proxy.Metrics.MsgBodySize.Update(int64(len))
 
 		case err := <-pmr.InErrors:
-			log.Printf("[serv] proxy connection read error - %s", err)
+			if err == io.EOF {
+				log.Printf("[serv] proxy connection closed by server")
+			} else {
+				log.Printf("[serv] proxy connection read error - %s", err)
+
+			}
 			break Loop
 		}
 
 	}
-
-	// TODO Output stats from the proxy connection
-	log.Println("[serv] Finished")
 
 }
 
