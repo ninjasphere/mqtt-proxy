@@ -140,7 +140,11 @@ Loop:
 			t.proxy.Metrics.MsgBodySize.Update(int64(len))
 
 		case err := <-cmr.InErrors:
-			log.Printf("[serv] client connection read error - %s", err)
+			if err == io.EOF {
+				log.Printf("[serv] client closed connection")
+			} else {
+				log.Printf("[serv] client connection read error - %s", err)
+			}
 			break Loop
 
 		case msg := <-pmr.InMsgs:
@@ -160,7 +164,7 @@ Loop:
 
 		case err := <-pmr.InErrors:
 			if err == io.EOF {
-				log.Printf("[serv] proxy connection closed by server")
+				log.Printf("[serv] proxy connection closed by backend server")
 			} else {
 				log.Printf("[serv] proxy connection read error - %s", err)
 
