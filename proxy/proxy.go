@@ -3,18 +3,11 @@ package proxy
 import (
 	"fmt"
 	"net"
-	"time"
 
 	"github.com/ninjablocks/mqtt-proxy/conf"
 	"github.com/ninjablocks/mqtt-proxy/metrics"
 	"github.com/ninjablocks/mqtt-proxy/rewrite"
 	"github.com/ninjablocks/mqtt-proxy/store"
-)
-
-const (
-	// this is the default read timeout for messages, after this point the connection is closed
-	// may want this to be tuneable on a per connection basis.
-	DefaultReadTimeout time.Duration = 30e9
 )
 
 type ProxyConn interface {

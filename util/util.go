@@ -11,27 +11,34 @@ import (
 )
 
 type MqttTcpMessageReader struct {
-	Tcpconn  net.Conn
-	InMsgs   chan mqtt.Message
-	InErrors chan error
+	Tcpconn     net.Conn
+	InMsgs      chan mqtt.Message
+	InErrors    chan error
+	ReadTimeout time.Duration
 }
 
-func CreateMqttTcpMessageReader(tcpconn net.Conn) *MqttTcpMessageReader {
+func CreateMqttTcpMessageReader(tcpconn net.Conn, readTimeout time.Duration) *MqttTcpMessageReader {
 	return &MqttTcpMessageReader{
-		Tcpconn:  tcpconn,
-		InMsgs:   make(chan mqtt.Message, 1),
-		InErrors: make(chan error, 1),
+		Tcpconn:     tcpconn,
+		InMsgs:      make(chan mqtt.Message, 1),
+		InErrors:    make(chan error, 1),
+		ReadTimeout: readTimeout,
 	}
 }
 
 func (m *MqttTcpMessageReader) ReadMqttMessages() {
 
-	defer log.Println("[serv] Reader done - ", m.Tcpconn.RemoteAddr())
-
-	m.Tcpconn.SetReadDeadline(time.Now().Add(proxy.DefaultReadTimeout))
+	defer log.Println("[serv] Reader done -", m.Tcpconn.RemoteAddr())
 
 	for {
+
+		// we only want to configure this if it is greater than zero
+		if m.ReadTimeout > 0 {
+			m.Tcpconn.SetReadDeadline(time.Now().Add(m.ReadTimeout))
+		}
+
 		msg, err := mqtt.DecodeOneMessage(m.Tcpconn, nil)
+
 		if err != nil {
 			m.InErrors <- err
 			break

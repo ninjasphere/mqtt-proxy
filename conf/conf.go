@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"github.com/BurntSushi/toml"
 )
@@ -50,12 +51,18 @@ type Configuration struct {
 	// prepended to metrics
 	Environment string `toml:"env"`
 
+	ReadTimeout int `toml:"read-timeout"`
+
 	Http           HttpConfiguration    `toml:"http"`
 	MqttStoreMysql MysqlConfiguration   `toml:"mqtt-store"`
 	WsStoreMysql   MysqlConfiguration   `toml:"ws-store"`
 	Mqtt           MqttConfiguration    `toml:"mqtt"`
 	Influx         InfluxConfiguration  `toml:"influx"`
 	Librato        LibratoConfiguration `toml:"librato"`
+}
+
+func (c *Configuration) GetReadTimeout() time.Duration {
+	return time.Second * time.Duration(c.ReadTimeout)
 }
 
 func LoadConfiguration(fileName string) *Configuration {

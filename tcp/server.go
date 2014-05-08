@@ -81,7 +81,7 @@ func (t *TcpServer) clientHandler(conn net.Conn) {
 	defer t.proxy.UnRegisterSession(conn)
 
 	// create channels for the return messages from the client
-	cmr := util.CreateMqttTcpMessageReader(conn)
+	cmr := util.CreateMqttTcpMessageReader(conn, t.proxy.Conf.GetReadTimeout())
 
 	go cmr.ReadMqttMessages()
 
@@ -114,7 +114,7 @@ func (t *TcpServer) clientHandler(conn net.Conn) {
 	}
 
 	// create channels for the return messages from the backend
-	pmr := util.CreateMqttTcpMessageReader(p.pConn)
+	pmr := util.CreateMqttTcpMessageReader(p.pConn, t.proxy.Conf.GetReadTimeout())
 
 	go pmr.ReadMqttMessages()
 
