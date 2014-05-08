@@ -4,6 +4,7 @@ import (
 	"log"
 	"net"
 	"reflect"
+	"time"
 
 	"github.com/ninjablocks/mqtt-proxy/proxy"
 	"github.com/wolfeidau/mqtt"
@@ -26,6 +27,8 @@ func CreateMqttTcpMessageReader(tcpconn net.Conn) *MqttTcpMessageReader {
 func (m *MqttTcpMessageReader) ReadMqttMessages() {
 
 	defer log.Println("[serv] Reader done - ", m.Tcpconn.RemoteAddr())
+
+	m.Tcpconn.SetReadDeadline(time.Now().Add(proxy.DefaultReadTimeout))
 
 	for {
 		msg, err := mqtt.DecodeOneMessage(m.Tcpconn, nil)
