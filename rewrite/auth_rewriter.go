@@ -13,10 +13,10 @@ type CredentialsRewriter interface {
 type CredentialsReplaceRewriter struct {
 	User   string
 	Pass   string
-	UserId uint
+	UserId string
 }
 
-func NewCredentialsReplaceRewriter(user string, pass string, uid uint) *CredentialsReplaceRewriter {
+func NewCredentialsReplaceRewriter(user string, pass string, uid string) *CredentialsReplaceRewriter {
 	return &CredentialsReplaceRewriter{
 		User:   user,
 		Pass:   pass,
@@ -36,7 +36,7 @@ func (crr *CredentialsReplaceRewriter) RewriteCredentials(msg *mqtt.Connect) *mq
 		msg.Password = crr.Pass
 	}
 
-	msg.ClientId = fmt.Sprintf("%d-%s", crr.UserId, msg.ClientId)
+	msg.ClientId = fmt.Sprintf("%s-%s", crr.UserId, msg.ClientId)
 
 	//	log.Printf("[creds] %v", msg)
 

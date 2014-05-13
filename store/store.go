@@ -11,6 +11,6 @@ type Store interface {
 }
 
 type User struct {
-	UserId uint   `json:"uid"`
+	UserId string `json:"uid"`
 	MqttId string `json:"mqttId"`
 }

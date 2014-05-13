@@ -52,5 +52,5 @@ func (p *MQTTProxy) mqttTopicRewriter(mqttId string, direction int) rewrite.Topi
 }
 
 func (p *MQTTProxy) MqttMsgRewriter(user *store.User) *rewrite.MsgRewriter {
-	return rewrite.CreatMsgRewriter(p.mqttCredentialsRewriter(user), p.mqttTopicRewriter(user.MqttId, rewrite.INGRESS), p.mqttTopicRewriter(user.MqttId, rewrite.EGRESS))
+	return rewrite.CreatMsgRewriter(p.mqttCredentialsRewriter(user), p.mqttTopicRewriter(user.UserId, rewrite.INGRESS), p.mqttTopicRewriter(user.UserId, rewrite.EGRESS))
 }

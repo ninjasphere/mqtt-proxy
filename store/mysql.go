@@ -42,7 +42,7 @@ func (s *MysqlStore) Health() bool {
 // Validates the credentials against MySQL.
 func (s *MysqlStore) FindUser(token string) (*User, error) {
 
-	var uid uint
+	var uid string
 	var mqttId string
 	err := s.db.QueryRow(s.conf.Select, token).Scan(&uid, &mqttId)
 	if err != nil {
