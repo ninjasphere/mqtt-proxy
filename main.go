@@ -23,7 +23,6 @@ func main() {
 
 	if *version {
 		fmt.Printf("Version: %s\n", Version)
-		fmt.Printf("Git: %s\n", GitCommit)
 		os.Exit(0)
 	}
 
