@@ -7,12 +7,20 @@ This service acts as a front end for mqtt servers peforming preauthentication, l
 Create a table with tokens in it.
 
 ```sql
-CREATE TABLE users (
+CREATE TABLE legends (
 	uid int(11) NOT NULL AUTO_INCREMENT,
-	mqtt_id varchar(128),
+	mqtt_id varchar(128) COLLATE utf8_bin NOT NULL,
 	PRIMARY KEY (uid),
 	UNIQUE KEY mqtt_id_UNIQUE (mqtt_id)
-)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE tokens (
+  token_id int(11) NOT NULL AUTO_INCREMENT,
+  uid int(11) NOT NULL,
+  token varchar(64) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (token_id),
+  UNIQUE KEY token_UNIQUE (token)
+) DEFAULT CHARSET=utf8;
 ```
 
 Configure rabbitmq as a backend for mqtt-proxy by editing or creating `/usr/local/etc/rabbitmq/rabbitmq.config`.
