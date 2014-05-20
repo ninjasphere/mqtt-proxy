@@ -11,7 +11,6 @@ import (
 	"github.com/ninjablocks/mqtt-proxy/metrics"
 	"github.com/ninjablocks/mqtt-proxy/proxy"
 	"github.com/ninjablocks/mqtt-proxy/tcp"
-	"github.com/ninjablocks/mqtt-proxy/ws"
 )
 
 var configFile = flag.String("config", "config.toml", "configuration file")
@@ -35,10 +34,7 @@ func main() {
 	p := proxy.CreateMQTTProxy(conf)
 
 	// asign the servers
-	wsServer := ws.CreateHttpHanders(p)
 	tcpServer := tcp.CreateTcpServer(p)
-
-	go wsServer.StartServer(&conf.Http)
 
 	go tcpServer.StartServer(&conf.Mqtt)
 

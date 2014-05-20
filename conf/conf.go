@@ -14,12 +14,6 @@ type MysqlConfiguration struct {
 	Select           string `toml:"select"`
 }
 
-type HttpConfiguration struct {
-	ListenAddress string `toml:"listen-address"`
-	Cert          string `toml:"cert"`
-	Key           string `toml:"key"`
-}
-
 type MqttConfiguration struct {
 	ListenAddress string `toml:"listen-address"`
 	Cert          string `toml:"cert"`
@@ -53,9 +47,7 @@ type Configuration struct {
 
 	ReadTimeout int `toml:"read-timeout"`
 
-	Http           HttpConfiguration    `toml:"http"`
 	MqttStoreMysql MysqlConfiguration   `toml:"mqtt-store"`
-	WsStoreMysql   MysqlConfiguration   `toml:"ws-store"`
 	Mqtt           MqttConfiguration    `toml:"mqtt"`
 	Influx         InfluxConfiguration  `toml:"influx"`
 	Librato        LibratoConfiguration `toml:"librato"`
@@ -95,15 +87,15 @@ func parseTomlConfiguration(filename string) (*Configuration, error) {
 	if tomlConfiguration.Environment == "" {
 		tomlConfiguration.Environment = "develop"
 	}
-	if tomlConfiguration.Http.ListenAddress == "" {
-		tomlConfiguration.Http.ListenAddress = ":9000"
-	}
+
 	if tomlConfiguration.Mqtt.ListenAddress == "" {
 		tomlConfiguration.Mqtt.ListenAddress = ":1883"
 	}
+
 	if tomlConfiguration.User == "" {
 		tomlConfiguration.User = "guest"
 	}
+
 	if tomlConfiguration.Pass == "" {
 		tomlConfiguration.Pass = "guest"
 	}
@@ -112,15 +104,9 @@ func parseTomlConfiguration(filename string) (*Configuration, error) {
 	if tomlConfiguration.MqttStoreMysql.ConnectionString == "" {
 		tomlConfiguration.MqttStoreMysql.ConnectionString = "root:@tcp(127.0.0.1:3306)/mqtt"
 	}
+
 	if tomlConfiguration.MqttStoreMysql.Select == "" {
 		tomlConfiguration.MqttStoreMysql.Select = "select uid, mqtt_id from users where mqtt_id = ?"
-	}
-
-	if tomlConfiguration.WsStoreMysql.ConnectionString == "" {
-		tomlConfiguration.WsStoreMysql.ConnectionString = "root:@tcp(127.0.0.1:3306)/mqtt"
-	}
-	if tomlConfiguration.WsStoreMysql.Select == "" {
-		tomlConfiguration.WsStoreMysql.Select = "select uid, mqtt_id from users where mqtt_id = ?"
 	}
 
 	return tomlConfiguration, nil
