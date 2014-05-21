@@ -20,15 +20,17 @@ func (s *MessagRewriterSuite) SetUpTest(c *C) {
 		CredentialsRewriter: &CredentialsReplaceRewriter{
 			User:   "guest",
 			Pass:   "123",
-			UserId: 1,
+			UserId: "1",
 		},
-		IngressRewriter: &TopicPrefixRewriter{
-			Prefix:      "$block",
-			Replacement: "$cloud/123",
+		IngressRewriter: &TopicPartRewriter{
+			Token:     "123",
+			Idx:       1,
+			Direction: INGRESS,
 		},
-		EgressRewriter: &TopicPrefixRewriter{
-			Prefix:      "$cloud/123",
-			Replacement: "$block",
+		EgressRewriter: &TopicPartRewriter{
+			Token:     "123",
+			Idx:       1,
+			Direction: EGRESS,
 		},
 	}
 }
@@ -36,7 +38,7 @@ func (s *MessagRewriterSuite) SetUpTest(c *C) {
 func (s *MessagRewriterSuite) TestIngressMsgPublish(c *C) {
 
 	// client publish a message to a topic
-	pub := createPublish("$block/456/789")
+	pub := createPublish("$cloud/456/789")
 	expectedPub := createPublish("$cloud/123/456/789")
 
 	modPub := s.msgRewriter.RewriteIngress(pub)
@@ -47,7 +49,7 @@ func (s *MessagRewriterSuite) TestIngressMsgPublish(c *C) {
 func (s *MessagRewriterSuite) TestIngressMsgSubscribe(c *C) {
 
 	// client subscribe a message to a topic
-	sub := createSubscribe("$block/456/789")
+	sub := createSubscribe("$cloud/456/789")
 	expectedSub := createSubscribe("$cloud/123/456/789")
 
 	modSub := s.msgRewriter.RewriteIngress(sub)
@@ -68,7 +70,7 @@ func (s *MessagRewriterSuite) TestConnect(c *C) {
 func (s *MessagRewriterSuite) TestIngressMsgUnsubscribe(c *C) {
 
 	// client unsubscribe to a topic
-	unsub := createUnsubscribe("$block/456/789")
+	unsub := createUnsubscribe("$cloud/456/789")
 	expectedUnsub := createUnsubscribe("$cloud/123/456/789")
 
 	modUnsub := s.msgRewriter.RewriteIngress(unsub)
@@ -78,7 +80,7 @@ func (s *MessagRewriterSuite) TestIngressMsgUnsubscribe(c *C) {
 func (s *MessagRewriterSuite) TestEgressMsgPublish(c *C) {
 
 	// client publish a message to a topic
-	pub := createPublish("$cloud/123/456/789")
+	pub := createPublish("$block/123/456/789")
 	expectedPub := createPublish("$block/456/789")
 
 	modPub := s.msgRewriter.RewriteEgress(pub)

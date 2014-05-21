@@ -6,4 +6,7 @@ clean:
 	rm bin/mqtt-proxy || true
 	rm -rf .gopath || true
 
-.PHONY: all	clean
+test:
+	go test ./...
+
+.PHONY: all	clean test

@@ -33,7 +33,7 @@ func main() {
 
 	p := proxy.CreateMQTTProxy(conf)
 
-	// asign the servers
+	// assign the servers
 	tcpServer := tcp.CreateTcpServer(p)
 
 	go tcpServer.StartServer(&conf.Mqtt)

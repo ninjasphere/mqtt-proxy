@@ -128,16 +128,16 @@ Loop:
 			//util.DebugMQTT("client", conn, msg)
 			msg = p.rewriter.RewriteIngress(msg)
 
-			t.proxy.Metrics.Msgs.Mark(1)
+			t.updateMsgCount(msg)
 
 			// write to the proxy connection
 			len, err := msg.Encode(p.pConn)
 
 			if err != nil {
-				log.Println("[serv] proxy connection error - %s", err)
+				log.Printf("[serv] proxy connection error - %s", err)
 				break Loop
 			}
-			t.proxy.Metrics.MsgBodySize.Update(int64(len))
+			t.updateMsgBodySize(len)
 
 		case err := <-cmr.InErrors:
 			if err == io.EOF {
@@ -157,10 +157,10 @@ Loop:
 			// write to the client connection
 			len, err := msg.Encode(p.cConn)
 			if err != nil {
-				log.Println("[serv] proxy connection error - %s", err)
+				log.Printf("[serv] proxy connection error - %s", err)
 				break Loop
 			}
-			t.proxy.Metrics.MsgBodySize.Update(int64(len))
+			t.updateMsgBodySize(len)
 
 		case err := <-pmr.InErrors:
 			if err == io.EOF {
@@ -182,7 +182,7 @@ func (t *TcpServer) handleAuth(cmr *util.MqttTcpMessageReader, proxyConn *TcpPro
 	case msg := <-cmr.InMsgs:
 
 		//util.DebugMQTT("auth", proxyConn.cConn, msg)
-		t.proxy.Metrics.Msgs.Mark(1)
+		t.updateMsgCount(msg)
 
 		switch cmsg := msg.(type) {
 		case *mqtt.Connect:
@@ -200,11 +200,11 @@ func (t *TcpServer) handleAuth(cmr *util.MqttTcpMessageReader, proxyConn *TcpPro
 			len, err := msg.Encode(proxyConn.pConn)
 
 			if err != nil {
-				log.Println("[serv] proxy connection error - %s", err)
+				log.Printf("[serv] proxy connection error - %s", err)
 				return err
 			}
 
-			t.proxy.Metrics.MsgBodySize.Update(int64(len))
+			t.updateMsgBodySize(len)
 
 			return nil
 
@@ -216,6 +216,14 @@ func (t *TcpServer) handleAuth(cmr *util.MqttTcpMessageReader, proxyConn *TcpPro
 		return err
 	}
 
+}
+
+func (t *TcpServer) updateMsgCount(msg mqtt.Message) {
+	t.proxy.Metrics.Msgs.Mark(1)
+}
+
+func (t *TcpServer) updateMsgBodySize(len int) {
+	t.proxy.Metrics.MsgBodySize.Update(int64(len))
 }
 
 func sendBadUsernameOrPassword(conn net.Conn) {

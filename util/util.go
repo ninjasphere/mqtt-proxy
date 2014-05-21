@@ -34,7 +34,8 @@ func (m *MqttTcpMessageReader) ReadMqttMessages() {
 
 		// we only want to configure this if it is greater than zero
 		if m.ReadTimeout > 0 {
-			m.Tcpconn.SetReadDeadline(time.Now().Add(m.ReadTimeout))
+			m.Tcpconn.SetDeadline(time.Now().Add(m.ReadTimeout))
+			m.Tcpconn.SetWriteDeadline(time.Now().Add(m.ReadTimeout))
 		}
 
 		msg, err := mqtt.DecodeOneMessage(m.Tcpconn, nil)

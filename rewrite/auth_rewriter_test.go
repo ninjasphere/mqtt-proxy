@@ -17,7 +17,7 @@ type CredentialsRewriterSuite struct {
 var _ = Suite(&CredentialsRewriterSuite{})
 
 func (s *CredentialsRewriterSuite) SetUpTest(c *C) {
-	s.credentialsRewriter = NewCredentialsReplaceRewriter("user", "pass", 1)
+	s.credentialsRewriter = NewCredentialsReplaceRewriter("user", "pass", "1")
 }
 
 func (s *CredentialsRewriterSuite) TestCredsRewrite(c *C) {
