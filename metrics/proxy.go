@@ -3,6 +3,7 @@ package metrics
 import (
 	"strings"
 
+	"github.com/ninjablocks/mqtt-proxy/conf"
 	gmetrics "github.com/rcrowley/go-metrics"
 )
 
@@ -43,4 +44,10 @@ func NewProxyMetrics(env string, region string) ProxyMetrics {
 
 func buildPrefix(env string, region string) string {
 	return strings.Join([]string{region, env, "mqtt-proxy"}, ".")
+}
+
+func StartMetricsJobs(config *conf.Configuration) {
+	StartRuntimeMetricsJob(config.Environment, config.Region)
+	UploadToInflux(&config.Influx)
+	UploadToLibrato(&config.Librato)
 }

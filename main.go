@@ -38,11 +38,7 @@ func main() {
 
 	go tcpServer.StartServer(&conf.Mqtt)
 
-	metrics.StartRuntimeMetricsJob(conf.Environment, conf.Region)
-
-	metrics.UploadToInflux(&conf.Influx)
-
-	metrics.UploadToLibrato(&conf.Librato)
+	metrics.StartMetricsJobs(conf)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill)
