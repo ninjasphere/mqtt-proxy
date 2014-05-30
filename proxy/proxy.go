@@ -44,7 +44,7 @@ func (p *MQTTProxy) UnRegisterSession(conn net.Conn) {
 }
 
 func (p *MQTTProxy) mqttCredentialsRewriter(user *store.User) rewrite.CredentialsRewriter {
-	return rewrite.NewCredentialsReplaceRewriter(p.Conf.User, p.Conf.Pass, user.UserId)
+	return rewrite.NewCredentialsReplaceRewriter(p.Conf.User, p.Conf.Pass, user.UserId, user.MqttId)
 }
 
 func (p *MQTTProxy) mqttTopicRewriter(mqttId string, direction int) rewrite.TopicRewriter {

@@ -2,6 +2,7 @@ package rewrite
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/wolfeidau/mqtt"
 )
@@ -14,13 +15,15 @@ type CredentialsReplaceRewriter struct {
 	User   string
 	Pass   string
 	UserId string
+	MqttId string
 }
 
-func NewCredentialsReplaceRewriter(user string, pass string, uid string) *CredentialsReplaceRewriter {
+func NewCredentialsReplaceRewriter(user string, pass string, uid string, mqttId string) *CredentialsReplaceRewriter {
 	return &CredentialsReplaceRewriter{
 		User:   user,
 		Pass:   pass,
 		UserId: uid,
+		MqttId: mqttId,
 	}
 }
 
@@ -36,9 +39,9 @@ func (crr *CredentialsReplaceRewriter) RewriteCredentials(msg *mqtt.Connect) *mq
 		msg.Password = crr.Pass
 	}
 
-	msg.ClientId = fmt.Sprintf("%s-%s", crr.UserId, msg.ClientId)
+	msg.ClientId = fmt.Sprintf("%s", crr.MqttId)
 
-	//	log.Printf("[creds] %v", msg)
+	log.Printf("[creds] connecting ClientId %s", msg.ClientId)
 
 	return msg
 }
