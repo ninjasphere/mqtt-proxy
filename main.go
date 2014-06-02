@@ -8,6 +8,7 @@ import (
 	"os/signal"
 
 	"github.com/ninjablocks/mqtt-proxy/conf"
+	"github.com/ninjablocks/mqtt-proxy/health"
 	"github.com/ninjablocks/mqtt-proxy/metrics"
 	"github.com/ninjablocks/mqtt-proxy/proxy"
 	"github.com/ninjablocks/mqtt-proxy/tcp"
@@ -37,6 +38,7 @@ func main() {
 	tcpServer := tcp.CreateTcpServer(p)
 
 	go tcpServer.StartServer(&conf.Mqtt)
+	go health.StartHealthServer(conf)
 
 	metrics.StartMetricsJobs(conf)
 

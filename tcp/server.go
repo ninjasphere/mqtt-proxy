@@ -152,6 +152,14 @@ Loop:
 			//util.DebugMQTT("proxy", conn, msg)
 			msg = p.rewriter.RewriteEgress(msg)
 
+			switch msg := msg.(type) {
+			case *mqtt.ConnAck:
+				log.Printf("[serv] got connack for %s", conn.RemoteAddr())
+				log.Printf("[serv] connack %+v", msg)
+			case *mqtt.Disconnect:
+				log.Printf("[serv] got disconnect for %s", conn.RemoteAddr())
+				log.Printf("[serv] disconnect %+v", msg)
+			}
 			t.proxy.Metrics.MsgReply.Mark(1)
 
 			// write to the client connection
