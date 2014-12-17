@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/davecgh/go-spew/spew"
 )
 
 type MysqlConfiguration struct {
@@ -57,6 +58,48 @@ func (c *Configuration) GetReadTimeout() time.Duration {
 	return time.Second * time.Duration(c.ReadTimeout)
 }
 
+func (c *Configuration) validate() error {
+
+	if len(c.BackendServers) == 0 {
+		return errors.New("At least one backend servers required.")
+	}
+
+	return nil
+}
+
+func (c *Configuration) assignDefaults() {
+
+	if c.Region == "" {
+		c.Region = "us-east"
+	}
+
+	if c.Environment == "" {
+		c.Environment = "develop"
+	}
+
+	if c.Mqtt.ListenAddress == "" {
+		c.Mqtt.ListenAddress = ":1883"
+	}
+
+	if c.User == "" {
+		c.User = "guest"
+	}
+
+	if c.Pass == "" {
+		c.Pass = "guest"
+	}
+
+	// need a way to merge defaults..
+	if c.MqttStoreMysql.ConnectionString == "" {
+		c.MqttStoreMysql.ConnectionString = "root:@tcp(127.0.0.1:3306)/mqtt"
+	}
+
+	if c.MqttStoreMysql.Select == "" {
+		c.MqttStoreMysql.Select = "select uid, mqtt_id from users where mqtt_id = ?"
+	}
+
+}
+
 func LoadConfiguration(fileName string) *Configuration {
 	config, err := parseTomlConfiguration(fileName)
 	if err != nil {
@@ -76,37 +119,14 @@ func parseTomlConfiguration(filename string) (*Configuration, error) {
 	if err != nil {
 		return nil, err
 	}
-	if len(tomlConfiguration.BackendServers) == 0 {
-		return nil, errors.New("At least one backend servers required.")
-	}
+	log.Println(spew.Sprintf("sql = %v", tomlConfiguration))
 
-	if tomlConfiguration.Region == "" {
-		tomlConfiguration.Region = "us-east"
-	}
+	tomlConfiguration.assignDefaults()
 
-	if tomlConfiguration.Environment == "" {
-		tomlConfiguration.Environment = "develop"
-	}
+	err = tomlConfiguration.validate()
 
-	if tomlConfiguration.Mqtt.ListenAddress == "" {
-		tomlConfiguration.Mqtt.ListenAddress = ":1883"
-	}
-
-	if tomlConfiguration.User == "" {
-		tomlConfiguration.User = "guest"
-	}
-
-	if tomlConfiguration.Pass == "" {
-		tomlConfiguration.Pass = "guest"
-	}
-
-	// need a way to merge defaults..
-	if tomlConfiguration.MqttStoreMysql.ConnectionString == "" {
-		tomlConfiguration.MqttStoreMysql.ConnectionString = "root:@tcp(127.0.0.1:3306)/mqtt"
-	}
-
-	if tomlConfiguration.MqttStoreMysql.Select == "" {
-		tomlConfiguration.MqttStoreMysql.Select = "select uid, mqtt_id from users where mqtt_id = ?"
+	if err != nil {
+		return nil, err
 	}
 
 	return tomlConfiguration, nil
