@@ -17,14 +17,14 @@ type CredentialsRewriterSuite struct {
 var _ = Suite(&CredentialsRewriterSuite{})
 
 func (s *CredentialsRewriterSuite) SetUpTest(c *C) {
-	s.credentialsRewriter = NewCredentialsReplaceRewriter("user", "pass", "1")
+	s.credentialsRewriter = NewCredentialsReplaceRewriter("user", "pass", "1", "1")
 }
 
 func (s *CredentialsRewriterSuite) TestCredsRewrite(c *C) {
 
 	// connection request message
 	connect := createConnectMessage("bob", "11223344", true, true, "abc")
-	expectedConnect := createConnectMessage("user", "pass", true, true, "1-abc")
+	expectedConnect := createConnectMessage("user", "pass", true, true, "1")
 
 	modConnect := s.credentialsRewriter.RewriteCredentials(connect)
 	c.Assert(modConnect, DeepEquals, expectedConnect)
@@ -35,7 +35,7 @@ func (s *CredentialsRewriterSuite) TestCredsRewriteJustUser(c *C) {
 
 	// connection request message
 	connect := createConnectMessage("bob", "", true, false, "abc")
-	expectedConnect := createConnectMessage("user", "pass", true, true, "1-abc")
+	expectedConnect := createConnectMessage("user", "pass", true, true, "1")
 
 	modConnect := s.credentialsRewriter.RewriteCredentials(connect)
 	c.Assert(modConnect, DeepEquals, expectedConnect)

@@ -21,15 +21,14 @@ func (s *MessagRewriterSuite) SetUpTest(c *C) {
 			User:   "guest",
 			Pass:   "123",
 			UserId: "1",
+			MqttId: "1",
 		},
 		IngressRewriter: &TopicPartRewriter{
 			Token:     "123",
-			Idx:       1,
 			Direction: INGRESS,
 		},
 		EgressRewriter: &TopicPartRewriter{
 			Token:     "123",
-			Idx:       1,
 			Direction: EGRESS,
 		},
 	}
@@ -39,7 +38,7 @@ func (s *MessagRewriterSuite) TestIngressMsgPublish(c *C) {
 
 	// client publish a message to a topic
 	pub := createPublish("$cloud/456/789")
-	expectedPub := createPublish("$cloud/123/456/789")
+	expectedPub := createPublish("123/$cloud/456/789")
 
 	modPub := s.msgRewriter.RewriteIngress(pub)
 	c.Assert(modPub, DeepEquals, expectedPub)
@@ -50,7 +49,7 @@ func (s *MessagRewriterSuite) TestIngressMsgSubscribe(c *C) {
 
 	// client subscribe a message to a topic
 	sub := createSubscribe("$cloud/456/789")
-	expectedSub := createSubscribe("$cloud/123/456/789")
+	expectedSub := createSubscribe("123/$cloud/456/789")
 
 	modSub := s.msgRewriter.RewriteIngress(sub)
 	c.Assert(modSub, DeepEquals, expectedSub)
@@ -61,7 +60,7 @@ func (s *MessagRewriterSuite) TestConnect(c *C) {
 
 	// connection request message
 	connect := createConnect("bob", "11223344", "abc")
-	expectedConnect := createConnect("guest", "123", "1-abc")
+	expectedConnect := createConnect("guest", "123", "1")
 
 	modConnect := s.msgRewriter.RewriteIngress(connect)
 	c.Assert(modConnect, DeepEquals, expectedConnect)
@@ -71,7 +70,7 @@ func (s *MessagRewriterSuite) TestIngressMsgUnsubscribe(c *C) {
 
 	// client unsubscribe to a topic
 	unsub := createUnsubscribe("$cloud/456/789")
-	expectedUnsub := createUnsubscribe("$cloud/123/456/789")
+	expectedUnsub := createUnsubscribe("123/$cloud/456/789")
 
 	modUnsub := s.msgRewriter.RewriteIngress(unsub)
 	c.Assert(modUnsub, DeepEquals, expectedUnsub)
@@ -80,7 +79,7 @@ func (s *MessagRewriterSuite) TestIngressMsgUnsubscribe(c *C) {
 func (s *MessagRewriterSuite) TestEgressMsgPublish(c *C) {
 
 	// client publish a message to a topic
-	pub := createPublish("$block/123/456/789")
+	pub := createPublish("123/$block/456/789")
 	expectedPub := createPublish("$block/456/789")
 
 	modPub := s.msgRewriter.RewriteEgress(pub)
