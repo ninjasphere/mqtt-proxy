@@ -48,7 +48,7 @@ func (p *MQTTProxy) mqttCredentialsRewriter(user *store.User) rewrite.Credential
 }
 
 func (p *MQTTProxy) mqttTopicRewriter(mqttId string, direction int) rewrite.TopicRewriter {
-	return rewrite.NewTopicPartRewriter(mqttId, 1, direction)
+	return rewrite.NewTopicPartRewriter(mqttId, direction)
 }
 
 func (p *MQTTProxy) MqttMsgRewriter(user *store.User) *rewrite.MsgRewriter {
