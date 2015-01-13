@@ -9,6 +9,7 @@ import (
 	"net"
 	"reflect"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/ninjablocks/mqtt-proxy/conf"
 	"github.com/ninjablocks/mqtt-proxy/proxy"
 	"github.com/ninjablocks/mqtt-proxy/store"
@@ -198,6 +199,7 @@ func (t *TcpServer) handleAuth(cmr *util.MqttTcpMessageReader, proxyConn *TcpPro
 			authUser, err := t.store.FindUser(cmsg.Username)
 
 			if err != nil {
+				log.Printf("[serv] authentication failed for %s - %s", authUser, err)
 				return err
 			}
 
@@ -209,6 +211,7 @@ func (t *TcpServer) handleAuth(cmr *util.MqttTcpMessageReader, proxyConn *TcpPro
 
 			if err != nil {
 				log.Printf("[serv] proxy connection error - %s", err)
+				log.Println(spew.Sprintf("msg %v", msg))
 				return err
 			}
 
@@ -221,6 +224,7 @@ func (t *TcpServer) handleAuth(cmr *util.MqttTcpMessageReader, proxyConn *TcpPro
 		return errors.New(fmt.Sprintf("expected connect got - %v", reflect.TypeOf(msg)))
 
 	case err := <-cmr.InErrors:
+		log.Printf("connection error ocurred during authentication - %s", err)
 		return err
 	}
 

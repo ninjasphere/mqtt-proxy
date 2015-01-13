@@ -19,6 +19,8 @@ var debug = flag.Bool("debug", false, "enable debugging")
 var version = flag.Bool("version", false, "show version")
 
 func main() {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+
 	flag.Parse()
 
 	if *version {
