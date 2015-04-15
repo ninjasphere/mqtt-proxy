@@ -5,7 +5,7 @@
     "Key": "dockercfg"
   },
   "Image": {
-    "Name": "docker-registry.sphere.ninja/ninjablocks/mqtt-proxy:<TAG>",
+    "Name": "ninjablocks/mqtt-proxy:<TAG>",
     "Update": "true"
   },
   "Ports": [

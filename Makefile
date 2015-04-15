@@ -12,7 +12,10 @@ APP_FILE := ${SHA1}.zip
 all: build deploy
 
 build:
-	docker build -t "docker-registry.sphere.ninja/ninjablocks/${PROJECT}:${SHA1}" .
+	docker build -t "ninjablocks/${PROJECT}:${SHA1}" .
+
+push:
+	docker push "ninjablocks/${PROJECT}:${SHA1}"
 
 services:
 	docker run --name ninja-rabbit -p 5672:5672 -p 15672:15672 -d mikaelhg/docker-rabbitmq
