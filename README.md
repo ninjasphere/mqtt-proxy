@@ -67,3 +67,6 @@ iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 443 -j REDIRECT --to-port 9
 
 * Preauthentication supports MySQL at the moment
 
+# Licensing
+
+mqtt-proxy is licensed under the MIT License. See LICENSE for the full license text.
