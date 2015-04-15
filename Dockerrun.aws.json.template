@@ -1,0 +1,16 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Authentication": {
+    "Bucket": "ninjablocks-sphere-docker",
+    "Key": "dockercfg"
+  },
+  "Image": {
+    "Name": "docker-registry.sphere.ninja/ninjablocks/mqtt-proxy:<TAG>",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": "6300"
+    }
+  ]
+}

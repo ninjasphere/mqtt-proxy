@@ -48,6 +48,5 @@ func buildPrefix(env string, region string) string {
 
 func StartMetricsJobs(config *conf.Configuration) {
 	StartRuntimeMetricsJob(config.Environment, config.Region)
-	UploadToInflux(&config.Influx)
 	UploadToLibrato(&config.Librato)
 }
