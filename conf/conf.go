@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"log"
+	"os"
 	"time"
 
 	"github.com/BurntSushi/toml"
@@ -56,6 +57,18 @@ type Configuration struct {
 
 func (c *Configuration) GetReadTimeout() time.Duration {
 	return time.Second * time.Duration(c.ReadTimeout)
+}
+
+func (c *Configuration) envOverrides() {
+
+	if backendUser := os.Getenv("BACKEND_USER"); backendUser != "" {
+		c.User = backendUser
+	}
+
+	if backendPass := os.Getenv("BACKEND_PASS"); backendPass != "" {
+		c.Pass = backendPass
+	}
+
 }
 
 func (c *Configuration) validate() error {
@@ -122,6 +135,7 @@ func parseTomlConfiguration(filename string) (*Configuration, error) {
 	log.Println(spew.Sprintf("sql = %v", tomlConfiguration))
 
 	tomlConfiguration.assignDefaults()
+	tomlConfiguration.envOverrides()
 
 	err = tomlConfiguration.validate()
 
