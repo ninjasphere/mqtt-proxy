@@ -9,7 +9,7 @@ SHA1 := $(shell git rev-parse --short HEAD | tr -d "\n")
 DOCKERRUN_FILE := Dockerrun.aws.json
 APP_FILE := ${SHA1}.zip
 
-all: build deploy
+all: build push deploy
 
 build:
 	docker build -t "ninjablocks/${PROJECT}:${SHA1}" .
@@ -22,10 +22,9 @@ services:
 
 local:
 	docker run -t -i --rm --link ninja-rabbit:rabbit -e "DEBUG=true" \
-		-p 6300:6300 -t "docker-registry.sphere.ninja/ninjablocks/${PROJECT}:${SHA1}"
+		-p 6300:6300 -t "ninjablocks/${PROJECT}:${SHA1}"
 
 deploy:
-	docker ${DOCKER_ARGS} push "docker-registry.sphere.ninja/ninjablocks/${PROJECT}:${SHA1}"
 	sed "s/<TAG>/${SHA1}/" < Dockerrun.aws.json.template > ${DOCKERRUN_FILE}
 	zip -r ${APP_FILE} ${DOCKERRUN_FILE} .ebextensions
 
@@ -43,4 +42,4 @@ clean:
 	rm ${DOCKERRUN_FILE} || true
 	rm -rf build || true
 
-.PHONY: all build local services deploy clean
+.PHONY: all build push local services deploy clean
