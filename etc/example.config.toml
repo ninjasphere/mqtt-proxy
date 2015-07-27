@@ -10,7 +10,7 @@ pass = "guest"
 read-timeout = 30
 
 [mqtt-store]
-connection-string = "root@tcp(mysql:3306)/ninja"
+connection-string = "douitsu:douitsu@tcp(mysql:3306)/douitsu"
 select = "select at.userID, at.mqtt_client_id from accesstoken at, accesstoken_scope ats where at.id = ats.accesstoken and ats.scope_domain in ('mqtt', '*') and ats.scope_item = '*' and at.id = ?"
 
 [mqtt]
