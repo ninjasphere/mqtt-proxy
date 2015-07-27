@@ -6,7 +6,7 @@ RUN        mkdir -p /var/log/supervisor
 RUN        mkdir -p /etc/mqtt-proxy
 
 COPY etc/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY etc/config.toml /etc/mqtt-proxy/config.toml
+COPY etc/example.config.toml /etc/mqtt-proxy/config.toml
 
 WORKDIR    /go/src/github.com/ninjablocks/mqtt-proxy
 ADD        . /go/src/github.com/ninjablocks/mqtt-proxy
