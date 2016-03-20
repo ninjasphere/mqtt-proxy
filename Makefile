@@ -9,8 +9,6 @@ SHA1 := $(shell git rev-parse --short HEAD | tr -d "\n")
 DOCKERRUN_FILE := Dockerrun.aws.json
 APP_FILE := ${SHA1}.zip
 
-all: build push deploy
-
 build:
 	docker build -t "ninjablocks/${PROJECT}:${SHA1}" .
 
