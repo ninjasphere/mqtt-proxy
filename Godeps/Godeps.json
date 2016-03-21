@@ -1,0 +1,38 @@
+{
+	"ImportPath": "github.com/ninjablocks/mqtt-proxy",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v60",
+	"Deps": [
+		{
+			"ImportPath": "github.com/BurntSushi/toml",
+			"Comment": "v0.1.0-21-g056c9bc",
+			"Rev": "056c9bc7be7190eaa7715723883caffa5f8fa3e4"
+		},
+		{
+			"ImportPath": "github.com/cloudfoundry/gosigar",
+			"Comment": "scotty_09012012-21-gd906efd",
+			"Rev": "d906efd1da51405714ee9b67c79cf14cdb58fd29"
+		},
+		{
+			"ImportPath": "github.com/davecgh/go-spew/spew",
+			"Rev": "2df174808ee097f90d259e432cc04442cf60be21"
+		},
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.2-171-g267b128",
+			"Rev": "267b128680c46286b9ca13475c3cca5de8f79bd7"
+		},
+		{
+			"ImportPath": "github.com/rcrowley/go-metrics",
+			"Rev": "3e5e593311103d49927c8d2b0fd93ccdfe4a525c"
+		},
+		{
+			"ImportPath": "github.com/rcrowley/go-metrics/librato",
+			"Rev": "3e5e593311103d49927c8d2b0fd93ccdfe4a525c"
+		},
+		{
+			"ImportPath": "github.com/wolfeidau/mqtt",
+			"Rev": "b3e33afe097268cf25bc43dc257c5042f44560ab"
+		}
+	]
+}

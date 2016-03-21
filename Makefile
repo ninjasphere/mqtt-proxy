@@ -9,7 +9,7 @@ SHA1 := $(shell git rev-parse --short HEAD | tr -d "\n")
 DOCKERRUN_FILE := Dockerrun.aws.json
 APP_FILE := ${SHA1}.zip
 
-build:
+build: binary
 	docker build -t "ninjablocks/${PROJECT}:${SHA1}" .
 
 push:
@@ -23,14 +23,12 @@ local:
 		-p 6300:6300 -t "ninjablocks/${PROJECT}:${SHA1}"
 
 binary:
-	dodep restore
-	go build -ldflags "\
-       -X main.buildVersion  $(grep "const Version " version.go | sed -E 's/.*"(.+)"$/\1/' ) \
-       -X main.buildRevision $(git rev-parse --short HEAD) \
-       -X main.buildBranch   $(git rev-parse --abbrev-ref HEAD) \
-       -X main.buildDate     $(date +%Y%m%d-%H:%M:%S) \
-       -X main.goVersion     $GOLANG_VERSION \
-    "
+	godep restore
+	GOOS=linux GOARCH=amd64 go build -o build/mqtt-proxy -ldflags "\
+       -X main.buildVersion=$$(grep "const Version " version.go | sed -E 's/.*"(.+)"$$/\1/' ) \
+       -X main.buildRevision=$$(git rev-parse --short HEAD) \
+       -X main.buildBranch=$$(git rev-parse --abbrev-ref HEAD) \
+       -X main.buildDate=$$(date +%Y%m%d-%H:%M:%S)"
 
 deploy:
 	sed "s/<TAG>/${SHA1}/" < Dockerrun.aws.json.template > ${DOCKERRUN_FILE}
