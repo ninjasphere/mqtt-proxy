@@ -22,6 +22,16 @@ local:
 	docker run -t -i --rm --link ninja-rabbit:rabbit -e "DEBUG=true" \
 		-p 6300:6300 -t "ninjablocks/${PROJECT}:${SHA1}"
 
+binary:
+	dodep restore
+	go build -ldflags "\
+       -X main.buildVersion  $(grep "const Version " version.go | sed -E 's/.*"(.+)"$/\1/' ) \
+       -X main.buildRevision $(git rev-parse --short HEAD) \
+       -X main.buildBranch   $(git rev-parse --abbrev-ref HEAD) \
+       -X main.buildDate     $(date +%Y%m%d-%H:%M:%S) \
+       -X main.goVersion     $GOLANG_VERSION \
+    "
+
 deploy:
 	sed "s/<TAG>/${SHA1}/" < Dockerrun.aws.json.template > ${DOCKERRUN_FILE}
 	zip -r ${APP_FILE} ${DOCKERRUN_FILE} .ebextensions
